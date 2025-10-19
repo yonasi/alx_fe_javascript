@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator</title>
+    <title>Dynamic Quote Generator - Web Storage</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
         #quoteDisplay { 
             border: 1px solid #ccc; 
             padding: 20px; 
@@ -15,23 +15,37 @@
         }
         .quote-text { font-style: italic; font-size: 1.2em; }
         .quote-category { color: #555; margin-top: 10px; font-size: 0.9em; }
-        .add-quote-section { margin-top: 30px; padding: 15px; border-top: 2px solid #eee; }
-        .add-quote-section input, .add-quote-section button { 
+        .section-control { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
+        .section-control button, .section-control input { 
             margin-right: 10px; 
             padding: 8px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Dynamic Quote Generator</h1>
+    <p>Quotes persisted using **Local Storage** across sessions.</p>
+
     <div id="quoteDisplay">
         <p>Loading quote...</p>
     </div>
 
-    <button id="newQuote">Show New Quote</button>
-
-    <div id="addQuoteFormContainer">
+    <div class="section-control">
+        <button id="newQuote">Show New Quote</button>
+        <button onclick="clearLocalStorage()">Clear All Quotes (Local Storage)</button>
+    </div>
+    
+    <div id="addQuoteFormContainer" class="section-control">
         </div>
+
+    <div class="section-control">
+        <h2>JSON Data Management</h2>
+        <button id="exportQuotes">Export Quotes to JSON</button>
+
+        <label for="importFile">Import Quotes (.json):</label>
+        <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    </div>
 
     <script src="script.js"></script>
 </body>
