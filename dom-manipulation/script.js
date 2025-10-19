@@ -68,7 +68,7 @@ function clearLocalStorage() {
 // #################################################
 
 /**
- * Updates the sync status element in the UI.
+ * Updates the sync status element in the UI (Notification System).
  */
 function updateSyncStatus(message, color = '#ffc') {
     syncStatusEl.style.backgroundColor = color;
@@ -76,35 +76,40 @@ function updateSyncStatus(message, color = '#ffc') {
 }
 
 /**
- * Simulates fetching canonical data from the server.
+ * RENAMED: Simulates fetching data from the server using a mock API.
  */
-async function fetchServerQuotes() {
-    updateSyncStatus('Fetching data from server...', '#e0f7fa');
+async function fetchQuotesFromServer() {
+    updateSyncStatus('Fetching data from server using mock API...', '#e0f7fa');
     await new Promise(resolve => setTimeout(resolve, 1500)); 
+    
+    // This return simulates the response from the server after a successful fetch.
     return MOCK_SERVER_DATA;
 }
 
 /**
- * Pushes local changes and resolves conflicts using "Server Wins" strategy.
+ * RENAMED: Synchronizes local data with server data, including conflict resolution.
+ * This function also SIMULATES the "posting data" step.
  */
-async function pushAndSync() {
-    updateSyncStatus('Syncing local changes with server...', '#fff3e0');
+async function syncQuotes() {
+    updateSyncStatus('Simulating post/sync of local changes...', '#fff3e0');
     
-    // Simulate API delay for push/pull
-    await new Promise(resolve => setTimeout(resolve, 2000)); 
+    // 1. SIMULATE posting local data to the server (Task 3 requirement: posting data)
+    // In a real app: await fetch('/api/quotes', { method: 'POST', body: JSON.stringify(quotes) });
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate post delay
 
-    const serverQuotes = await fetchServerQuotes();
-    const localQuotes = loadQuotes(false); // Get local copy without altering global state
+    // 2. Fetch the canonical, merged data from the server (Task 3 requirement: fetching data)
+    const serverQuotes = await fetchQuotesFromServer();
+    const localQuotes = loadQuotes(false); 
 
-    // Check for differences (a simplified check)
+    // 3. Check for conflicts/updates (Task 3 requirement: conflict resolution)
     if (serverQuotes.length !== localQuotes.length || JSON.stringify(serverQuotes) !== JSON.stringify(localQuotes)) {
         
         // --- CONFLICT RESOLUTION: SERVER WINS ---
-        quotes = serverQuotes; 
-        saveQuotes(); 
+        quotes = serverQuotes; // Update local data with server data
+        saveQuotes(); // Update local storage with server data
 
-        const message = `Sync complete. ${serverQuotes.length} quotes loaded. **Server data took precedence.**`;
-        updateSyncStatus(message, '#e8f5e9'); // Green success
+        const message = `Sync complete. **${serverQuotes.length - localQuotes.length}** updates received. Server data took precedence.`;
+        updateSyncStatus(message, '#e8f5e9'); // Green success notification (Task 3 requirement: UI notification)
 
         // Update UI
         populateCategories();
@@ -115,11 +120,11 @@ async function pushAndSync() {
 }
 
 /**
- * Initializes the periodic syncing.
+ * Initializes the periodic syncing (Task 3 requirement: periodically checking).
  */
 function startPeriodicSync() {
-    pushAndSync(); // Initial sync
-    setInterval(pushAndSync, SYNC_INTERVAL_MS);
+    syncQuotes(); // Initial sync
+    setInterval(syncQuotes, SYNC_INTERVAL_MS);
 }
 
 
@@ -258,7 +263,7 @@ function addQuote() {
         filterQuotes();
         
         // 5. Trigger an immediate sync (Simulated push)
-        pushAndSync(); 
+        syncQuotes(); 
     } else {
         alert('Please enter both the quote text and the category.');
     }
@@ -313,7 +318,7 @@ function importFromJsonFile(event) {
                 alert(`Successfully imported ${importedQuotes.length} quotes! Triggering sync.`);
                 
                 // 4. Trigger sync after successful import
-                pushAndSync(); 
+                syncQuotes(); 
             } else {
                 alert('Error: Imported file does not contain a valid array of quotes (text and category are required).');
             }
