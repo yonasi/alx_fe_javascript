@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator - Web Storage</title>
+    <title>Dynamic Quote Generator - Content Filtering</title>
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
         #quoteDisplay { 
@@ -16,7 +16,7 @@
         .quote-text { font-style: italic; font-size: 1.2em; }
         .quote-category { color: #555; margin-top: 10px; font-size: 0.9em; }
         .section-control { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
-        .section-control button, .section-control input { 
+        .section-control button, .section-control input, .section-control select { 
             margin-right: 10px; 
             padding: 8px;
             margin-bottom: 10px;
@@ -25,14 +25,21 @@
 </head>
 <body>
     <h1>Dynamic Quote Generator</h1>
-    <p>Quotes persisted using **Local Storage** across sessions.</p>
+    <p>Quotes and last filter setting persisted using **Local Storage**.</p>
 
+    <div class="section-control">
+        <h2>Filter Quotes by Category</h2>
+        <select id="categoryFilter" onchange="filterQuotes()">
+            <option value="all">All Categories</option>
+            </select>
+    </div>
+    
     <div id="quoteDisplay">
         <p>Loading quote...</p>
     </div>
 
     <div class="section-control">
-        <button id="newQuote">Show New Quote</button>
+        <button id="newQuote">Show New Quote (Based on Filter)</button>
         <button onclick="clearLocalStorage()">Clear All Quotes (Local Storage)</button>
     </div>
     
@@ -42,7 +49,6 @@
     <div class="section-control">
         <h2>JSON Data Management</h2>
         <button id="exportQuotes">Export Quotes to JSON</button>
-
         <label for="importFile">Import Quotes (.json):</label>
         <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
     </div>
